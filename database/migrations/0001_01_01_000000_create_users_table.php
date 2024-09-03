@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('password');
             $table->boolean('is_active')->default(false);
             $table->integer('role')->default(3);
+            $table->string('phone', 20)->nullable();
+            $table->string('phone2', 20)->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
@@ -39,7 +41,7 @@ return new class extends Migration
         });
     }
 
-    
+
     /**
      * Reverse the migrations.
      */
