@@ -138,7 +138,7 @@ class AuthController extends Controller
             $data['data_user_list'] = $userDataList;
             return response()->json($data);
         } catch (\Exception $e) {
-            \Log::info($e);
+            // \Log::info($e);
             $data = [];
             $data['response_code'] = '400';
             $data['status'] = 'error';
