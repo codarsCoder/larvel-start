@@ -3,32 +3,25 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\SessionLog;
-use App\Models\SmsConfirmation;
-use App\Services\Sms;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Http\Request;
 use App\Models\User;
-use Carbon\Carbon;
-use Auth;
-use Hash;
+use App\Services\AuthService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
+    protected $authService;
 
-    protected $smsService;
-
-    public function __construct(Sms $smsService)
+    public function __construct(AuthService $authService)
     {
-        $this->smsService = $smsService;
+        $this->authService = $authService;
     }
 
     /** register new account */
     public function register(Request $request)
     {
         try {
-
-
             $request->validate([
                 'name' => 'required|min:4',
                 'email' => 'required|email',
@@ -36,43 +29,22 @@ class AuthController extends Controller
                 'phone' => 'required|numeric',
             ]);
 
-            $dt = Carbon::now();
-            $join_date = $dt->toDayDateTimeString();
+            $user = $this->authService->registerUser($request->all());
+            $smsResponse = $this->authService->sendSmsConfirmation($user->phone, "REGISTER-VERIFY");
 
-            $user = new User();
-            $user->name = $request->name;
-            $user->email = $request->email;
-            $user->phone = $request->phone;
-            $user->password = Hash::make($request->password);
-            $user->save();
-
-            $generateCode = rand(100000, 999999);
-            $smsConfirmation = new SmsConfirmation();
-            $smsConfirmation->action = "REGISTER-VERIFY";
-            $smsConfirmation->expire_at = now()->addSeconds(185);
-            $smsConfirmation->phone = clearPhone($request->phone);
-            $smsConfirmation->code = $generateCode;
-            $smsConfirmation->save();
-            // $this->smsService->send(clearPhone($request->phone), "Üyeliğinizi tamamlamak için doğrulama kodunuz " . $generateCode);
-
-
-            $data = [];
-            $data['response_code'] = '200';
-            $data['status'] = 'success';
-            $data['message'] = 'success Register';
-            return response()->json($data);
+            return response()->json($smsResponse);
         } catch (\Exception $e) {
             \Log::info($e);
-            $data = [];
-            $data['response_code'] = '400';
-            $data['status'] = 'error';
-            $data['message'] = 'fail Register';
-            return response()->json($data);
+            return response()->json([
+                'response_code' => '400',
+                'status' => 'error',
+                'message' => 'Fail Register'
+            ]);
         }
     }
 
     /**
-     * Login Req
+     * Login Start
      */
     public function loginStart(Request $request)
     {
@@ -81,67 +53,27 @@ class AuthController extends Controller
         ]);
 
         try {
-
             $phone = $request->phone;
             $user = User::where('phone', $phone)->first();
+
             if (!$user) {
-                $newUser = new User();
-                $newUser->phone = clearPhone($request->phone);
-                $newUser->save();
-                if ($newUser) {
-                    $generateCode = 123456;
-                               // $generateCode = rand(100000, 999999);
-                    $expired_at = now()->addSeconds(185);
-                    $smsConfirmation = new SmsConfirmation();
-                    $smsConfirmation->user_id = $newUser->id;
-                    $smsConfirmation->action = "REGISTER";
-                    $smsConfirmation->expire_at = $expired_at;
-                    $smsConfirmation->phone = $newUser->phone;
-                    $smsConfirmation->code = $generateCode;
-                    $smsConfirmation->save();
-                        // $this->smsService->send(clearPhone($request->phone), "Üyeliğinizi tamamlamak için doğrulama kodunuz " . $generateCode);
-
-                    return response()->json([
-                        'status' => '200',
-                        'message' => 'Register success, sended code',
-                        'expire_at' => $expired_at
-                    ]);
-                } else {
-                    $data = [];
-                    $data['status'] = 401;
-                    $data['message'] = 'Fail Register';
-                    return response()->json($data);
-                }
+                $user = $this->authService->registerUser(['phone' => clearPhone($phone)]);
+                $smsResponse = $this->authService->sendSmsConfirmation($phone, "REGISTER", $user->id);
             } else {
-                // $generateCode = rand(100000, 999999);
-                $generateCode = 123456;
-                $expired_at = now()->addSeconds(185);
-                $smsConfirmation = new SmsConfirmation();
-                $smsConfirmation->user_id = $user->id;
-                $smsConfirmation->action = "LOGIN";
-                $smsConfirmation->expire_at = $expired_at; ;
-                $smsConfirmation->phone = clearPhone($user->phone);
-                $smsConfirmation->code = $generateCode;
-                $smsConfirmation->save();
-                // $this->smsService->send(clearPhone($request->phone), "Üyeliğinizi tamamlamak için doğrulama kodunuz " . $generateCode);
-
-                return response()->json([
-                    'status' => '200',
-                    'message' => 'sended code',
-                    'expire_at' => $expired_at
-                ]);
+                $smsResponse = $this->authService->sendSmsConfirmation($phone, "LOGIN", $user->id);
             }
 
-
+            return response()->json($smsResponse);
         } catch (\Exception $e) {
-            // \Log::info($e);
-            $data = [];
-            $data['response_code'] = '401';
-            $data['status'] = 'error';
-            $data['message'] = $e->getMessage();
-            return response()->json($data);
+            \Log::info($e);
+            return response()->json([
+                'response_code' => '401',
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
         }
     }
+
     public function login(Request $request)
     {
         $request->validate([
@@ -150,21 +82,18 @@ class AuthController extends Controller
         ]);
 
         try {
-
             $phone = $request->phone;
             $code = $request->code;
-            $confirmation = SmsConfirmation::where('phone', $phone)
-            ->where('code', $code)
-            ->orderBy('created_at', 'desc')
-            ->first();
-            // return response()->json($confirmation);
+            $confirmation = $this->authService->verifyCode($phone, $code);
+
             if ($confirmation) {
                 $user = User::where('id', $confirmation->user_id)->first();
+
                 if ($confirmation->expire_at < now()) {
-                    $data = [];
-                    $data['status'] = 401;
-                    $data['message'] = 'Code Expired';
-                    return response()->json($data);
+                    return response()->json([
+                        'status' => 401,
+                        'message' => 'Code Expired',
+                    ]);
                 }
 
                 if ($confirmation->action == "REGISTER") {
@@ -172,58 +101,46 @@ class AuthController extends Controller
                     $user->save();
                 }
 
-                $accessToken = $user->createToken($user->phone)->accessToken;
-                // Auth::login($user); web rotaları için girişte bu önemli oturumu başlatmak için kullanılır
-                $data = [];
-                $data['status'] = 200;
-                $data['message'] = 'success Login';
-                $data['token'] = $accessToken;
+                $accessToken = $this->authService->createAccessToken($user);
+                $this->authService->logSession($request, $user);
 
-                $ipAddress = $request->ip();
-                $userAgent = $request->userAgent();
-
-                // Örneğin, bu bilgileri veritabanına kaydedebilirsiniz
-                SessionLog::create([
-                    'user_id' => $user->id,
-                    'ip_address' => $ipAddress,
-                    'user_agent' => $userAgent,
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'success Login',
+                    'token' => $accessToken,
                 ]);
-                return response()->json($data);
             } else {
-                $data = [];
-                $data['status'] = 401;
-                $data['message'] = 'Unauthorised';
-                return response()->json($data);
+                return response()->json([
+                    'status' => 401,
+                    'message' => 'Unauthorised',
+                ]);
             }
         } catch (\Exception $e) {
             \Log::info($e);
-            $data = [];
-            $data['response_code'] = '401';
-            $data['status'] = 'error';
-            $data['message'] = $e->getMessage();
-            return response()->json($data);
+            return response()->json([
+                'response_code' => '401',
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
         }
     }
 
     /** user info */
-    public function userInfo()
+    public function testToken()
     {
         try {
-            $userDataList = User::latest()->paginate(10);
-            $data = [];
-            $data['response_code'] = '200';
-            $data['status'] = 'success';
-            $data['site'] = config('settings.site_name');
-            ;
-            $data['data_user_list'] = $userDataList;
-            return response()->json($data);
+            $user = Auth::user();
+            return response()->json([
+                'status' => 200,
+                'message' => 'success',
+                'phone' => $user->phone,
+            ]);
         } catch (\Exception $e) {
-            // \Log::info($e);
-            $data = [];
-            $data['response_code'] = '400';
-            $data['status'] = 'error';
-            $data['message'] = 'fail get user list';
-            return response()->json($data);
+            \Log::info($e);
+            return response()->json([
+                'status' => 400,
+                'message' => 'failed',
+            ]);
         }
     }
 }

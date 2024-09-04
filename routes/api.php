@@ -12,6 +12,6 @@ Route::post('register', [AuthController::class, 'register']);
 Route::post('login-start', [AuthController::class, 'loginStart']);
 Route::post('login', [AuthController::class, 'login']);
 Route::middleware('auth:api')->group(function () {
-    Route::get('get-user', [AuthController::class, 'userInfo']);
+    Route::get('test-token', [AuthController::class, 'testToken']);
 });
 
