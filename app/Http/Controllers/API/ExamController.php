@@ -74,9 +74,9 @@ class ExamController extends Controller
         $exam = $this->examService->update($id, $validated);
 
         if ($exam) {
-            return response()->json($exam, 200);
+            return response()->json(['status' => 200, 'message' => 'Exam updated successfully']);
         } else {
-            return response()->json(['message' => 'Exam not found'], 404);
+            return response()->json(['status' => 404, 'message' => 'Exam not found'], 404);
         }
 
         } catch (\Exception $e) {
