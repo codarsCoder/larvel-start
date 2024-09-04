@@ -88,7 +88,7 @@ class AuthController extends Controller
                 $newUser = new User();
                 $newUser->phone = clearPhone($request->phone);
                 $newUser->save();
-                if($newUser) {
+                if ($newUser) {
                     $generateCode = 123456;
                     $smsConfirmation = new SmsConfirmation();
                     $smsConfirmation->user_id = $newUser->id;
@@ -99,7 +99,8 @@ class AuthController extends Controller
                     $smsConfirmation->save();
                     return response()->json([
                         'status' => '200',
-                        'message' => 'Register success, sended code']);
+                        'message' => 'Register success, sended code'
+                    ]);
                 } else {
                     $data = [];
                     $data['status'] = 401;
@@ -118,9 +119,10 @@ class AuthController extends Controller
                 $smsConfirmation->save();
                 // $this->smsService->send(clearPhone($request->phone), "Üyeliğinizi tamamlamak için doğrulama kodunuz " . $generateCode);
 
-            return response()->json([
-                'status' => '200',
-                'message' => 'sended code']);
+                return response()->json([
+                    'status' => '200',
+                    'message' => 'sended code'
+                ]);
             }
 
 
@@ -146,23 +148,20 @@ class AuthController extends Controller
             $code = $request->code;
             $confirmation = SmsConfirmation::where('phone', $phone)->where('code', $code)->first();
             if ($confirmation) {
-                if($confirmation->expire_at < now()) {
+                if ($confirmation->expire_at < now()) {
                     $data = [];
                     $data['status'] = 401;
                     $data['message'] = 'Code Expired';
                     return response()->json($data);
                 }
-                if($confirmation->action == "REGISTER") {
+                if ($confirmation->action == "REGISTER") {
                     $user = User::where('id', $confirmation->user_id)->first();
                     $user->status = 1;
                     $user->save();
                 }
 
-
-
-                $user = Auth::User();
                 $accessToken = $user->createToken($user->phone)->accessToken;
-
+                // Auth::login($user); web rotaları için girişte bu önemli oturumu başlatmak için kullanılır
                 $data = [];
                 $data['status'] = 200;
                 $data['message'] = 'success Login';
