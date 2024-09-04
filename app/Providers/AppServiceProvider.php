@@ -20,11 +20,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $settings = [];
+        // $settings = [];
 
-        foreach (Setting::where('id',1)->get() as $item) {
-            $settings[$item->name] = $item->value;
-        }
-        \Config::set('settings', $settings);
+        // foreach (Setting::where('id',1)->get() as $item) {
+        //     $settings[$item->name] = $item->value;
+        // }
+        // \Config::set('settings', $settings);
     }
 }

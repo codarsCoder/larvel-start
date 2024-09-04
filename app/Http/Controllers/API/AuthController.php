@@ -42,6 +42,7 @@ class AuthController extends Controller
             $user = new User();
             $user->name = $request->name;
             $user->email = $request->email;
+            $user->phone = $request->phone;
             $user->password = Hash::make($request->password);
             $user->save();
 
@@ -73,16 +74,72 @@ class AuthController extends Controller
     /**
      * Login Req
      */
-    public function login(Request $request)
+    public function loginStart(Request $request)
     {
         $request->validate([
-            'email' => 'required|string',
-            'password' => 'required|string',
+            'phone' => 'required|numeric|phone',
         ]);
 
         try {
 
-            $email = $request->email;
+            $phone = $request->phone;
+            $user = User::where('phone', $phone)->first();
+            if (!$user) {
+                $newUser = new User();
+                $newUser->phone = clearPhone($request->phone);
+                $newUser->save();
+                if($newUser) {
+                    $generateCode = 123456;
+                    $smsConfirmation = new SmsConfirmation();
+                    $smsConfirmation->action = "REGISTER";
+                    $smsConfirmation->expire_at = now()->addMinutes(3);
+                    $smsConfirmation->phone = $newUser->phone;
+                    $smsConfirmation->code = $generateCode;
+                    $smsConfirmation->save();
+                    return response()->json([
+                        'status' => '200',
+                        'message' => 'Register success, sended code']);
+                } else {
+                    $data = [];
+                    $data['status'] = 401;
+                    $data['message'] = 'Fail Register';
+                    return response()->json($data);
+                }
+            } else {
+                // $generateCode = rand(100000, 999999);
+                $generateCode = 123456;
+                $smsConfirmation = new SmsConfirmation();
+                $smsConfirmation->action = "LOGIN";
+                $smsConfirmation->expire_at = now()->addMinutes(3);
+                $smsConfirmation->phone = clearPhone($user->phone);
+                $smsConfirmation->code = $generateCode;
+                $smsConfirmation->save();
+                // $this->smsService->send(clearPhone($request->phone), "Üyeliğinizi tamamlamak için doğrulama kodunuz " . $generateCode);
+
+            return response()->json([
+                'status' => '200',
+                'message' => 'sended code']);
+            }
+
+
+        } catch (\Exception $e) {
+            // \Log::info($e);
+            $data = [];
+            $data['response_code'] = '401';
+            $data['status'] = 'error';
+            $data['message'] = $e->getMessage();
+            return response()->json($data);
+        }
+    }
+    public function login(Request $request)
+    {
+        $request->validate([
+            'phone' => 'required|numeric',
+        ]);
+
+        try {
+
+            $phone = $request->phone;
             $password = $request->password;
 
             if (Auth::attempt(['email' => $email, 'password' => $password])) {
