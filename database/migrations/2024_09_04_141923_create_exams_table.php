@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('title'); // Sınav başlığı
             $table->unsignedBigInteger('exam_type_id');
-            $table->string('lesson'); // Ders adı
+            $table->unsignedBigInteger('lesson_id');
             $table->integer('question_count'); // Soru sayısı
             $table->integer('exam_duration'); // Sınav süresi (dakika cinsinden)
             $table->dateTime('start_time'); // Başlangıç zamanı
@@ -24,6 +24,7 @@ return new class extends Migration {
             $table->timestamps();
 
             $table->foreign('exam_type_id')->references('id')->on('exam_types');
+            $table->foreign('lesson_id')->references('id')->on('lessons');
 
         });
     }
