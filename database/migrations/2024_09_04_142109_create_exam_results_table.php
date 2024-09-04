@@ -19,6 +19,8 @@ return new class extends Migration
             $table->integer('true_answer');
             $table->integer('false_answer');
             $table->integer('empty_answer');
+            $table->integer('degree')->nullable();
+            $table->integer('point')->nullable();
             $table->timestamp('start_time')->nullable();
             $table->timestamp('end_time')->nullable();
             $table->timestamps();

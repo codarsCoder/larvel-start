@@ -21,10 +21,7 @@ class AuthService
     public function registerUser(array $data)
     {
         $user = new User();
-        $user->name = $data['name'];
-        $user->email = $data['email'];
         $user->phone = $data['phone'];
-        $user->password = Hash::make($data['password']);
         $user->save();
 
         return $user;
