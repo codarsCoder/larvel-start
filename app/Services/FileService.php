@@ -66,12 +66,18 @@ class FileService
 // {
 //     $this->imageService = $imageService;
 // }
-// $request->validate([
-//     'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-// ]);
 
 // $file = $request->file('image');
-// $directory ="avatars";
+// $directory = "avatars";
+// $imagePath = $this->fileService->storeImage($file, $directory);
 
-// // Dosyayı kaydet ve URL'ini al
-// $fileUrl = $this->fileService->storeImage($file, $directory);
+// // Veritabanına `images/avatars/filename.jpg` şeklinde yol kaydedebilirsiniz.
+
+// $imagePath = 'images/avatars/filename.jpg';
+// $imageUrl = $this->fileService->getImageUrl($imagePath);
+
+// // $imageUrl ile dosyanın URL'ini alabilirsiniz.
+// $imagePath = 'images/avatars/filename.jpg';
+// $success = $this->fileService->deleteFile($imagePath);
+
+// // $success true/false olarak dosyanın silinip silinmediğini belirtir.
