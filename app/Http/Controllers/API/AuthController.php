@@ -49,7 +49,7 @@ class AuthController extends Controller
             $generateCode = rand(100000, 999999);
             $smsConfirmation = new SmsConfirmation();
             $smsConfirmation->action = "REGISTER-VERIFY";
-            $smsConfirmation->expire_at = now()->addMinutes(3);
+            $smsConfirmation->expire_at = now()->addSeconds(185);
             $smsConfirmation->phone = clearPhone($request->phone);
             $smsConfirmation->code = $generateCode;
             $smsConfirmation->save();
@@ -93,7 +93,7 @@ class AuthController extends Controller
                     $smsConfirmation = new SmsConfirmation();
                     $smsConfirmation->user_id = $newUser->id;
                     $smsConfirmation->action = "REGISTER";
-                    $smsConfirmation->expire_at = now()->addMinutes(3);
+                    $smsConfirmation->expire_at = now()->addSeconds(185);
                     $smsConfirmation->phone = $newUser->phone;
                     $smsConfirmation->code = $generateCode;
                     $smsConfirmation->save();
@@ -113,7 +113,7 @@ class AuthController extends Controller
                 $smsConfirmation = new SmsConfirmation();
                 $smsConfirmation->user_id = $user->id;
                 $smsConfirmation->action = "LOGIN";
-                $smsConfirmation->expire_at = now()->addMinutes(3);
+                $smsConfirmation->expire_at = now()->addSeconds(185);
                 $smsConfirmation->phone = clearPhone($user->phone);
                 $smsConfirmation->code = $generateCode;
                 $smsConfirmation->save();
@@ -146,7 +146,11 @@ class AuthController extends Controller
 
             $phone = $request->phone;
             $code = $request->code;
-            $confirmation = SmsConfirmation::where('phone', $phone)->where('code', $code)->first();
+            $confirmation = SmsConfirmation::where('phone', $phone)
+            ->where('code', $code)
+            ->orderBy('created_at', 'desc')
+            ->first();
+
             if ($confirmation) {
                 if ($confirmation->expire_at < now()) {
                     $data = [];
@@ -156,7 +160,7 @@ class AuthController extends Controller
                 }
                 if ($confirmation->action == "REGISTER") {
                     $user = User::where('id', $confirmation->user_id)->first();
-                    $user->status = 1;
+                    $user->is_active = 1;
                     $user->save();
                 }
 
