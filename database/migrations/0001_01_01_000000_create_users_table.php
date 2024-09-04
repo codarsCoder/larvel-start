@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
+            $table->string('classroom')->nullable();
             $table->boolean('is_active')->default(false);
             $table->integer('role')->default(3);
             $table->string('phone', 20)->unique();

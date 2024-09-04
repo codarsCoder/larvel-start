@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('sms_confirmations', function (Blueprint $table) {
             $table->id();
+            $table->bigInteger('user_id');
             $table->string('action');
             $table->string('phone');
             $table->string('code');

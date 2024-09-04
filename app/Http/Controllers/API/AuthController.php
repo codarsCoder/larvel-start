@@ -77,7 +77,7 @@ class AuthController extends Controller
     public function loginStart(Request $request)
     {
         $request->validate([
-            'phone' => 'required|numeric|phone',
+            'phone' => 'required|string',
         ]);
 
         try {
@@ -91,6 +91,7 @@ class AuthController extends Controller
                 if($newUser) {
                     $generateCode = 123456;
                     $smsConfirmation = new SmsConfirmation();
+                    $smsConfirmation->user_id = $newUser->id;
                     $smsConfirmation->action = "REGISTER";
                     $smsConfirmation->expire_at = now()->addMinutes(3);
                     $smsConfirmation->phone = $newUser->phone;
@@ -109,6 +110,7 @@ class AuthController extends Controller
                 // $generateCode = rand(100000, 999999);
                 $generateCode = 123456;
                 $smsConfirmation = new SmsConfirmation();
+                $smsConfirmation->user_id = $user->id;
                 $smsConfirmation->action = "LOGIN";
                 $smsConfirmation->expire_at = now()->addMinutes(3);
                 $smsConfirmation->phone = clearPhone($user->phone);
@@ -135,26 +137,37 @@ class AuthController extends Controller
     {
         $request->validate([
             'phone' => 'required|numeric',
+            'code' => 'required|numeric',
         ]);
 
         try {
 
             $phone = $request->phone;
-            $password = $request->password;
+            $code = $request->code;
+            $confirmation = SmsConfirmation::where('phone', $phone)->where('code', $code)->first();
+            if ($confirmation) {
+                if($confirmation->expire_at < now()) {
+                    $data = [];
+                    $data['status'] = 401;
+                    $data['message'] = 'Code Expired';
+                    return response()->json($data);
+                }
+                if($confirmation->action == "REGISTER") {
+                    $user = User::where('id', $confirmation->user_id)->first();
+                    $user->status = 1;
+                    $user->save();
+                }
 
-            if (Auth::attempt(['email' => $email, 'password' => $password])) {
+
+
                 $user = Auth::User();
-                $accessToken = $user->createToken($user->email)->accessToken;
+                $accessToken = $user->createToken($user->phone)->accessToken;
 
                 $data = [];
-                $data['response_code'] = '200';
-                $data['status'] = 'success';
+                $data['status'] = 200;
                 $data['message'] = 'success Login';
-                $data['user_infor'] = $user;
                 $data['token'] = $accessToken;
 
-
-                $sessionId = session()->getId();
                 $ipAddress = $request->ip();
                 $userAgent = $request->userAgent();
 
@@ -167,8 +180,7 @@ class AuthController extends Controller
                 return response()->json($data);
             } else {
                 $data = [];
-                $data['response_code'] = '401';
-                $data['status'] = 'error';
+                $data['status'] = 401;
                 $data['message'] = 'Unauthorised';
                 return response()->json($data);
             }
