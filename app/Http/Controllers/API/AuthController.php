@@ -90,16 +90,21 @@ class AuthController extends Controller
                 $newUser->save();
                 if ($newUser) {
                     $generateCode = 123456;
+                               // $generateCode = rand(100000, 999999);
+                    $expired_at = now()->addSeconds(185);
                     $smsConfirmation = new SmsConfirmation();
                     $smsConfirmation->user_id = $newUser->id;
                     $smsConfirmation->action = "REGISTER";
-                    $smsConfirmation->expire_at = now()->addSeconds(185);
+                    $smsConfirmation->expire_at = $expired_at;
                     $smsConfirmation->phone = $newUser->phone;
                     $smsConfirmation->code = $generateCode;
                     $smsConfirmation->save();
+                        // $this->smsService->send(clearPhone($request->phone), "Üyeliğinizi tamamlamak için doğrulama kodunuz " . $generateCode);
+
                     return response()->json([
                         'status' => '200',
-                        'message' => 'Register success, sended code'
+                        'message' => 'Register success, sended code',
+                        'expire_at' => $expired_at
                     ]);
                 } else {
                     $data = [];
@@ -110,10 +115,11 @@ class AuthController extends Controller
             } else {
                 // $generateCode = rand(100000, 999999);
                 $generateCode = 123456;
+                $expired_at = now()->addSeconds(185);
                 $smsConfirmation = new SmsConfirmation();
                 $smsConfirmation->user_id = $user->id;
                 $smsConfirmation->action = "LOGIN";
-                $smsConfirmation->expire_at = now()->addSeconds(185);
+                $smsConfirmation->expire_at = $expired_at; ;
                 $smsConfirmation->phone = clearPhone($user->phone);
                 $smsConfirmation->code = $generateCode;
                 $smsConfirmation->save();
@@ -121,7 +127,8 @@ class AuthController extends Controller
 
                 return response()->json([
                     'status' => '200',
-                    'message' => 'sended code'
+                    'message' => 'sended code',
+                    'expire_at' => $expired_at
                 ]);
             }
 
@@ -150,16 +157,17 @@ class AuthController extends Controller
             ->where('code', $code)
             ->orderBy('created_at', 'desc')
             ->first();
-
+            // return response()->json($confirmation);
             if ($confirmation) {
+                $user = User::where('id', $confirmation->user_id)->first();
                 if ($confirmation->expire_at < now()) {
                     $data = [];
                     $data['status'] = 401;
                     $data['message'] = 'Code Expired';
                     return response()->json($data);
                 }
+
                 if ($confirmation->action == "REGISTER") {
-                    $user = User::where('id', $confirmation->user_id)->first();
                     $user->is_active = 1;
                     $user->save();
                 }
