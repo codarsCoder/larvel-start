@@ -19,10 +19,10 @@ return new class extends Migration
             $table->unsignedBigInteger('parent_id')->default(0); // Ana soru ID (varsayılan olarak 0)
             $table->integer('option_count'); // Şık sayısı
             $table->integer('true_answer'); // Doğru cevap (şık numarası)
-            $table->integer('answer_count'); // Verilen cevap sayısı
-            $table->integer('true_answer_count'); // Doğru cevap sayısı
-            $table->integer('participants_count'); // Katılımcı sayısı
-            $table->integer('point'); // Soru puanı
+            $table->integer('answer_count')->nullable(); // Verilen cevap sayısı
+            $table->integer('true_answer_count')->nullable(); // Doğru cevap sayısı
+            $table->integer('participants_count')->nullable(); // Katılımcı sayısı
+            $table->integer('point')->nullable(); // Soru puanı
             $table->timestamps();
 
             // Foreign key constraints (without onDelete)

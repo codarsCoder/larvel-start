@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toplu Soru Ekle</title>
+</head>
+
+<body>
+    <h1>Toplu Soru Ekle</h1>
+    <form id="questionsForm">
+        <div id="questionsWrapper">
+            <!-- İlk soru formu -->
+            <div class="question-group">
+                <h3>Soru 1</h3>
+                <label for="exam_id_1">Exam ID:</label>
+                <input type="number" name="exam_id" id="exam_id_1" required><br>
+
+                <label for="order_1">Soru Sırası:</label>
+                <input type="number" name="order" id="order_1" required><br>
+
+                <label for="parent_id_1">Ana Soru ID:</label>
+                <input type="number" name="parent_id" id="parent_id_1" value="0"><br>
+
+                <label for="option_count_1">Şık Sayısı:</label>
+                <input type="number" name="option_count" id="option_count_1" required><br>
+
+                <label for="true_answer_1">Doğru Cevap (Şık Numarası):</label>
+                <input type="number" name="true_answer" id="true_answer_1" required><br>
+
+                <label for="answer_count_1">Verilen Cevap Sayısı:</label>
+                <input type="number" name="answer_count" id="answer_count_1" required><br>
+
+                <label for="true_answer_count_1">Doğru Cevap Sayısı:</label>
+                <input type="number" name="true_answer_count" id="true_answer_count_1" required><br>
+
+                <label for="participants_count_1">Katılımcı Sayısı:</label>
+                <input type="number" name="participants_count" id="participants_count_1" required><br>
+
+                <label for="point_1">Soru Puanı:</label>
+                <input type="number" name="point" id="point_1" required><br>
+
+                <label for="question_img_1">Soru Görseli:</label>
+                <input type="file" name="question_img" id="question_img_1" accept="image/*"><br><br>
+            </div>
+        </div>
+
+        <!-- Yeni soru eklemek için buton -->
+        <button type="button" onclick="addQuestion()">Yeni Soru Ekle</button><br><br>
+
+        <button type="submit">Soruları Gönder</button>
+    </form>
+
+    <script>
+        let questionCount = 1;
+
+        // Yeni soru eklemek için fonksiyon
+        function addQuestion() {
+            questionCount++;
+            const questionsWrapper = document.getElementById('questionsWrapper');
+            const newQuestionGroup = document.createElement('div');
+            newQuestionGroup.classList.add('question-group');
+
+            newQuestionGroup.innerHTML = `
+                <h3>Soru ${questionCount}</h3>
+                <label for="exam_id_${questionCount}">Exam ID:</label>
+                <input type="number" name="exam_id" id="exam_id_${questionCount}" required><br>
+
+                <label for="order_${questionCount}">Soru Sırası:</label>
+                <input type="number" name="order" id="order_${questionCount}" required><br>
+
+                <label for="parent_id_${questionCount}">Ana Soru ID:</label>
+                <input type="number" name="parent_id" id="parent_id_${questionCount}" value="0"><br>
+
+                <label for="option_count_${questionCount}">Şık Sayısı:</label>
+                <input type="number" name="option_count" id="option_count_${questionCount}" required><br>
+
+                <label for="true_answer_${questionCount}">Doğru Cevap (Şık Numarası):</label>
+                <input type="number" name="true_answer" id="true_answer_${questionCount}" required><br>
+
+                <label for="answer_count_${questionCount}">Verilen Cevap Sayısı:</label>
+                <input type="number" name="answer_count" id="answer_count_${questionCount}" required><br>
+
+                <label for="true_answer_count_${questionCount}">Doğru Cevap Sayısı:</label>
+                <input type="number" name="true_answer_count" id="true_answer_count_${questionCount}" required><br>
+
+                <label for="participants_count_${questionCount}">Katılımcı Sayısı:</label>
+                <input type="number" name="participants_count" id="participants_count_${questionCount}" required><br>
+
+                <label for="point_${questionCount}">Soru Puanı:</label>
+                <input type="number" name="point" id="point_${questionCount}" required><br>
+
+                <label for="question_img_${questionCount}">Soru Görseli:</label>
+                <input type="file" name="question_img" id="question_img_${questionCount}" accept="image/*"><br><br>
+            `;
+
+            questionsWrapper.appendChild(newQuestionGroup);
+        }
+
+        // Formu gönderme işlemi
+        document.getElementById('questionsForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            // FormData nesnesi oluştur
+            const formData = new FormData();
+
+            // Her bir soru formunu al ve formData'ya ekle
+            const questionGroups = document.querySelectorAll('.question-group');
+            questionGroups.forEach((group, index) => {
+                const exam_id = group.querySelector(`[name="exam_id"]`).value;
+                const order = group.querySelector(`[name="order"]`).value;
+                const parent_id = group.querySelector(`[name="parent_id"]`).value;
+                const option_count = group.querySelector(`[name="option_count"]`).value;
+                const true_answer = group.querySelector(`[name="true_answer"]`).value;
+                const answer_count = group.querySelector(`[name="answer_count"]`).value;
+                const true_answer_count = group.querySelector(`[name="true_answer_count"]`).value;
+                const participants_count = group.querySelector(`[name="participants_count"]`).value;
+                const point = group.querySelector(`[name="point"]`).value;
+                const question_img = group.querySelector(`[name="question_img"]`).files[0];
+
+                // FormData'ya ekle
+                formData.append(`questions[${index}][exam_id]`, exam_id);
+                formData.append(`questions[${index}][order]`, order);
+                formData.append(`questions[${index}][parent_id]`, parent_id);
+                formData.append(`questions[${index}][option_count]`, option_count);
+                formData.append(`questions[${index}][true_answer]`, true_answer);
+                formData.append(`questions[${index}][answer_count]`, answer_count);
+                formData.append(`questions[${index}][true_answer_count]`, true_answer_count);
+                formData.append(`questions[${index}][participants_count]`, participants_count);
+                formData.append(`questions[${index}][point]`, point);
+
+                // Görsel dosyası varsa ekle
+                if (question_img) {
+                    formData.append(`questions[${index}][question_img]`, question_img);
+                }
+            });
+
+            // Ajax isteği ile veriyi gönder
+            fetch('/api/questions/multiple', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Başarıyla kaydedildi:', data);
+                    alert('Sorular başarıyla kaydedildi!');
+                })
+                .catch(error => {
+                    console.error('Hata oluştu:', error);
+                    alert('Bir hata oluştu!');
+                });
+        });
+    </script>
+</body>
+
+</html>

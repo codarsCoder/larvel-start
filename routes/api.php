@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\ExamController;
+use App\Http\Controllers\API\QuestionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,4 +20,5 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/add-exam', [ExamController::class, 'store']);
     Route::put('/update-exam/{id}', [ExamController::class, 'update']);
 });
+Route::post('/add-question-multiple', [QuestionController::class, 'storeMultiple']);
 

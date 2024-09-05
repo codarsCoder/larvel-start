@@ -6,7 +6,7 @@ use App\Models\Question;
 
 class QuestionService
 {
-    public function createMultiple(array $questions): array
+    public function multipleStore(array $questions): array
     {
         $createdQuestions = [];
 
