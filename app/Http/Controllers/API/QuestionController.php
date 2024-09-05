@@ -22,19 +22,19 @@ class QuestionController extends Controller
     public function storeMultiple(Request $request)
     {
 
-        $validated = $request->validate([
-            'questions' => 'required|array|min:1',
-            'questions.*.exam_id' => 'required|exists:exams,id',
-            'questions.*.order' => 'required|integer|min:1',
-            'questions.*.parent_id' => 'nullable|exists:questions,id',
-            'questions.*.option_count' => 'required|integer|min:1',
-            'questions.*.true_answer' => 'required|integer|min:1|max:questions.*.option_count',
-            'questions.*.answer_count' => 'required|integer|min:0',
-            'questions.*.true_answer_count' => 'required|integer|min:0',
-            'questions.*.participants_count' => 'required|integer|min:0',
-            'questions.*.point' => 'required|integer|min:0',
-            'questions.*.question_img' => 'nullable|file|mimes:jpg,png,jpeg|max:2048'
-        ]);
+        // $validated = $request->validate([
+        //     'questions' => 'required|array|min:1',
+        //     'questions.*.exam_id' => 'required|exists:exams,id',
+        //     'questions.*.order' => 'required|integer|min:1',
+        //     'questions.*.parent_id' => 'nullable|exists:questions,id',
+        //     'questions.*.option_count' => 'required|integer|min:1',
+        //     'questions.*.true_answer' => 'required|integer|min:1|max:questions.*.option_count',
+        //     'questions.*.answer_count' => 'required|integer|min:0',
+        //     'questions.*.true_answer_count' => 'required|integer|min:0',
+        //     'questions.*.participants_count' => 'required|integer|min:0',
+        //     'questions.*.point' => 'required|integer|min:0',
+        //     'questions.*.question_img' => 'nullable|file|mimes:jpg,png,jpeg|max:2048'
+        // ]);
 
         $questionsData = [];
 

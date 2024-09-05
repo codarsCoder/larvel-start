@@ -120,15 +120,15 @@
                 const question_img = group.querySelector(`[name="question_img"]`).files[0];
 
                 // FormData'ya ekle
-                formData.append(`questions[${index}][exam_id]`, exam_id);
-                formData.append(`questions[${index}][order]`, order);
-                formData.append(`questions[${index}][parent_id]`, parent_id);
-                formData.append(`questions[${index}][option_count]`, option_count);
-                formData.append(`questions[${index}][true_answer]`, true_answer);
-                formData.append(`questions[${index}][answer_count]`, answer_count);
-                formData.append(`questions[${index}][true_answer_count]`, true_answer_count);
-                formData.append(`questions[${index}][participants_count]`, participants_count);
-                formData.append(`questions[${index}][point]`, point);
+                formData.append(`questions[${index}][exam_id]`, Number(exam_id));
+                formData.append(`questions[${index}][order]`, Number(order));
+                formData.append(`questions[${index}][parent_id]`, Number(parent_id));
+                formData.append(`questions[${index}][option_count]`, Number(option_count));
+                formData.append(`questions[${index}][true_answer]`, Number(true_answer));
+                formData.append(`questions[${index}][answer_count]`, Number(answer_count));
+                formData.append(`questions[${index}][true_answer_count]`, Number(true_answer_count));
+                formData.append(`questions[${index}][participants_count]`, Number(participants_count));
+                formData.append(`questions[${index}][point]`, Number(point));
 
                 // Görsel dosyası varsa ekle
                 if (question_img) {
@@ -137,7 +137,7 @@
             });
 
             // Ajax isteği ile veriyi gönder
-            fetch('/api/questions/multiple', {
+            fetch('http://localhost:8000/api/add-question-multiple', {
                     method: 'POST',
                     body: formData
                 })
