@@ -7,7 +7,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class RoleMiddleware
+class AdminMiddleware
 {
     /**
      * Handle an incoming request.
@@ -16,13 +16,13 @@ class RoleMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Kullanıcının rolünü kontrol ediyoruz
-        if (Auth::check() && Auth::user()->role == 1) {
-            return $next($request); // Rol 1 ise devam et
-        }
+             // Kullanıcının rolünü kontrol ediyoruz
+             if (Auth::check() && Auth::user()->role == 1) {
+                return $next($request); // Rol 1 ise devam et
+            }
 
-        // Rol 1 değilse yetki hatası döndürüyoruz
-        return response()->json(['error' => 'Unauthorized'], 403);
-    }
+            // Rol 1 değilse yetki hatası döndürüyoruz
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
 
 }

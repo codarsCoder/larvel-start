@@ -17,15 +17,22 @@ Route::post('login', [AuthController::class, 'login']);
 
 Route::middleware('auth:api')->group(function () {
 
-    Route::get('test-token', [AuthController::class, 'testToken']);
 
 
 
     Route::middleware('isAdmin')->group(function () {
         //exams
-        Route::post('exams/add-exam', [ExamController::class, 'store']);
-        Route::put('exams/update-exam/{id}', [ExamController::class, 'update']);
-        Route::post('questions/add-question-multiple', [QuestionController::class, 'storeMultiple']);
+        Route::prefix('exams')->group(function () {
+            Route::post('add-exam', [ExamController::class, 'store']);
+            Route::put('update-exam/{id}', [ExamController::class, 'update']);
+        });
+
+        //questions
+        Route::prefix('questions')->group(function () {
+            Route::post('add-question-multiple', [QuestionController::class, 'storeMultiple']);
+        });
+
+        Route::get('test-token', [AuthController::class, 'testToken']);
 
 
     });
