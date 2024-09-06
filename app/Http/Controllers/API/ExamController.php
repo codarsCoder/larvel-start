@@ -17,6 +17,8 @@ class ExamController extends Controller
     public function __construct(ExamService $examService, FileService $fileService, QuestionService $questionService)
     {
         $this->examService = $examService;
+        $this->fileService = $fileService;
+        $this->questionService = $questionService;
     }
 
     public function store(Request $request)
