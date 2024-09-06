@@ -62,7 +62,12 @@ class QuestionController extends Controller
     {
         // Soruyu bul
         $question = $this->questionService->findById($id);
-
+        if(!$question) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Question not found',
+            ]);
+        }
         // Eğer soru görseli varsa eski dosyayı sil ve yenisini kaydet
         if ($request->hasFile('question_img')) {
             // Eski görsel dosyasını sil
@@ -101,7 +106,12 @@ class QuestionController extends Controller
         try {
         // Soruyu bul
         $question = $this->questionService->findById($id);
-
+        if(!$question) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Question not found',
+            ]);
+        }
         // Eğer soru görseli varsa, eski dosyayı sil
         if (!empty($question->question_img)) {
             $this->fileService->deleteFile($question->question_img);
