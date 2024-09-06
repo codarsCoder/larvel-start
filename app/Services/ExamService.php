@@ -33,4 +33,10 @@ class ExamService
         return Exam::find($id);
     }
 
+    public function getExams()
+    {
+        return Exam::all();
+    }
+
+
 }

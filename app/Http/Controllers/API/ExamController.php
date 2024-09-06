@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Services\ExamService;
 use App\Services\FileService;
 use App\Services\QuestionService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class ExamController extends Controller
@@ -135,5 +136,32 @@ class ExamController extends Controller
         ]);
     }
 }
+
+    public function getExam($id)
+    {
+        $exam = $this->examService->findById($id);
+        return response()->json([
+            'status' => 200,
+            'exams' => $exam
+        ]);
+    }
+    public function getAllExams()
+    {
+        $exams = $this->examService->getExams();
+        return response()->json([
+            'status' => 200,
+            'exams' => $exams
+        ]);
+    }
+    public function getExams()
+    {
+        $user = Auth::user();
+        $exams = $this->examService->getExams();
+        return response()->json([
+            'status' => 200,
+            'exams' => $exams
+        ]);
+    }
+
 
 }

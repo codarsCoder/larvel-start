@@ -11,12 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('purchases', function (Blueprint $table) {
+        Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('exam_id');
-            $table->unsignedBigInteger('payment_id');
             $table->string('transaction_id')->unique();
+            $table->string('transaction_token')->nullable();
+            $table->string('payment_method');
+            $table->string('payment_type');
+            $table->decimal('amount', 8, 2);
+            $table->string('currency', 3);
+            $table->string('status');
+            $table->text('description')->nullable();
             $table->timestamps();
 
             // Foreign key constraints, but without cascading on delete
@@ -29,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('purchases');
+        Schema::dropIfExists('payments');
     }
 };

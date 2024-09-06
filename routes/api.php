@@ -18,6 +18,7 @@ Route::post('login', [AuthController::class, 'login']);
 Route::middleware('auth:api')->group(function () {
 
 
+    Route::get('get-exams', [ExamController::class, 'getExams']);
 
 
     Route::middleware('isAdmin')->group(function () {
@@ -27,6 +28,9 @@ Route::middleware('auth:api')->group(function () {
             Route::post('add-exam', [ExamController::class, 'store']);
             Route::put('update-exam/{id}', [ExamController::class, 'update']);
             Route::delete('delete-exam/{id}', [ExamController::class, 'deleteExam']);
+            //aşağıda user_id de nbağımsız exam bilgisi alınabilir ama bunu sadece admin yapabilir
+            Route::get('get-exam/{id}', [ExamController::class, 'getExam']);
+            Route::get('get-all-exams', [ExamController::class, 'getAllExams']);
         });
 
         //questions
