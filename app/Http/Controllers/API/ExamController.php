@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Services\ExamService;
 use App\Services\FileService;
+use App\Services\PurchaseService;
 use App\Services\QuestionService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;

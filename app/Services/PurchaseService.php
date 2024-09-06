@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\Exam;
 use App\Models\Purchase;
 
-class PurcheseService
+class PurchaseService
 {
     // public function create(array $data): Exam
     // {
