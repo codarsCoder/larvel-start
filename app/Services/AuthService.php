@@ -29,8 +29,7 @@ class AuthService
 
     public function sendSmsConfirmation($phone, $action, $userId = null)
     {
-        $generateCode =123456;
-        // $generateCode = rand(100000, 999999);
+        $generateCode = rand(100000, 999999);
         $expired_at = now()->addSeconds(185);
 
         $smsConfirmation = new SmsConfirmation();

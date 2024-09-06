@@ -30,10 +30,11 @@ Route::middleware('auth:api')->group(function () {
         //questions
         Route::prefix('questions')->group(function () {
             Route::post('add-question-multiple', [QuestionController::class, 'storeMultiple']);
+            Route::put('update-question/{id}', [QuestionController::class, 'update']);
+            Route::delete('delete-question/{id}', [QuestionController::class, 'delete']);
         });
 
         Route::get('test-token', [AuthController::class, 'testToken']);
-
 
     });
 });

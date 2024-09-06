@@ -58,4 +58,60 @@ class QuestionController extends Controller
         ]);
     }
 
+    public function update(Request $request, $id)
+    {
+        // Soruyu bul
+        $question = $this->questionService->findById($id);
+
+        // Eğer soru görseli varsa eski dosyayı sil ve yenisini kaydet
+        if ($request->hasFile('question_img')) {
+            // Eski görsel dosyasını sil
+            if (!empty($question->question_img)) {
+                $this->fileService->deleteFile($question->question_img);
+            }
+
+            // Yeni dosyayı kaydet ve dosya yolunu soruya ata
+            $file = $request->file('question_img');
+            $filePath = $this->fileService->storeImage($file, 'questions');
+            $question->question_img = $filePath;
+        }
+
+        // Diğer bilgileri güncelle
+        $question->exam_id = $request->input('exam_id', $question->exam_id);
+        $question->order = $request->input('order', $question->order);
+        $question->parent_id = $request->input('parent_id', $question->parent_id);
+        $question->option_count = $request->input('option_count', $question->option_count);
+        $question->true_answer = $request->input('true_answer', $question->true_answer);
+        $question->answer_count = $request->input('answer_count', $question->answer_count);
+        $question->true_answer_count = $request->input('true_answer_count', $question->true_answer_count);
+        $question->participants_count = $request->input('participants_count', $question->participants_count);
+        $question->point = $request->input('point', $question->point);
+
+        // Soruyu kaydet
+        $this->questionService->update($question);
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Question updated successfully',
+        ]);
+    }
+
+    public function delete($id)
+    {
+        // Soruyu bul
+        $question = $this->questionService->findById($id);
+
+        // Eğer soru görseli varsa, eski dosyayı sil
+        if (!empty($question->question_img)) {
+            $this->fileService->deleteFile($question->question_img);
+        }
+
+        // Soruyu sil
+        $this->questionService->delete($question);
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Question deleted successfully',
+        ]);
+    }
 }
