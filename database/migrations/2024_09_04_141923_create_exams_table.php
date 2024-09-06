@@ -23,8 +23,8 @@ return new class extends Migration {
             $table->integer('total_point')->nullable(); // Katılımcı sayısı (boş bırakılabilir)
             $table->timestamps();
 
-            $table->foreign('exam_type_id')->references('id')->on('exam_types');
-            $table->foreign('lesson_id')->references('id')->on('lessons');
+            // $table->foreign('exam_type_id')->references('id')->on('exam_types');
+            // $table->foreign('lesson_id')->references('id')->on('lessons');
 
         });
     }

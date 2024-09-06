@@ -98,6 +98,7 @@ class QuestionController extends Controller
 
     public function delete($id)
     {
+        try {
         // Soruyu bul
         $question = $this->questionService->findById($id);
 
@@ -113,5 +114,11 @@ class QuestionController extends Controller
             'status' => 200,
             'message' => 'Question deleted successfully',
         ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 500,
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
 }

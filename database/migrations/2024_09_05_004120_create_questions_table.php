@@ -26,8 +26,8 @@ return new class extends Migration
             $table->timestamps();
 
             // Foreign key constraints (without onDelete)
-            $table->foreign('exam_id')->references('id')->on('exams'); // exams tablosuyla ilişki
-            $table->foreign('parent_id')->references('id')->on('questions'); // Ana soruyla ilişki
+            // $table->foreign('exam_id')->references('id')->on('exams'); // exams tablosuyla ilişki
+            // $table->foreign('parent_id')->references('id')->on('questions'); // Ana soruyla ilişki
         });
     }
 

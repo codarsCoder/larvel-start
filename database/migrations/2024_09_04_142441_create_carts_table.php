@@ -21,9 +21,9 @@ return new class extends Migration
             $table->timestamps();
 
             // Foreign key constraints, but without cascading on delete
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('exam_id')->references('id')->on('exams');
-            $table->foreign('purchase_id')->references('id')->on('purchases');
+            // $table->foreign('user_id')->references('id')->on('users');
+            // $table->foreign('exam_id')->references('id')->on('exams');
+            // $table->foreign('purchase_id')->references('id')->on('purchases');
         });
     }
 

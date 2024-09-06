@@ -20,8 +20,8 @@ return new class extends Migration
             $table->timestamps(); // created_at ve updated_at kolonları
 
             // Foreign key constraints (without onDelete cascade)
-            $table->foreign('user_id')->references('id')->on('users'); // users tablosu ile ilişki
-            $table->foreign('question_id')->references('id')->on('questions'); // questions tablosu ile ilişki
+            // $table->foreign('user_id')->references('id')->on('users'); // users tablosu ile ilişki
+            // $table->foreign('question_id')->references('id')->on('questions'); // questions tablosu ile ilişki
         });
     }
 
