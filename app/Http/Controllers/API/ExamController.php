@@ -15,11 +15,14 @@ class ExamController extends Controller
     protected $fileService;
     protected $questionService;
 
-    public function __construct(ExamService $examService, FileService $fileService, QuestionService $questionService)
+    protected $purchaseService;
+
+    public function __construct(ExamService $examService, FileService $fileService, QuestionService $questionService, PurchaseService $purchaseService)
     {
         $this->examService = $examService;
         $this->fileService = $fileService;
         $this->questionService = $questionService;
+        $this->purchaseService = $purchaseService;
     }
 
     public function store(Request $request)
@@ -156,10 +159,11 @@ class ExamController extends Controller
     public function getExams()
     {
         $user = Auth::user();
-        $exams = $this->examService->getExams();
+        $purchases = $this->purchaseService->getPurchasedsByUser($user->id);
+        // $exams = $this->examService->getExams();
         return response()->json([
             'status' => 200,
-            'exams' => $exams
+            'exams' => $purchases
         ]);
     }
 

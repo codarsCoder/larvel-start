@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('phone', 20)->unique();
             $table->string('phone2', 20)->nullable();
             $table->rememberToken();
+            $table->softDeletes();
             $table->timestamps();
         });
 

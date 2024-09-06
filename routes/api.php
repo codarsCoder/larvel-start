@@ -18,7 +18,7 @@ Route::post('login', [AuthController::class, 'login']);
 Route::middleware('auth:api')->group(function () {
 
 
-    Route::get('get-exams', [ExamController::class, 'getExams']);
+    Route::get('get-my-exams', [ExamController::class, 'getExams']);
 
 
     Route::middleware('isAdmin')->group(function () {

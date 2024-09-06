@@ -23,6 +23,7 @@ return new class extends Migration
             $table->integer('true_answer_count')->nullable(); // Doğru cevap sayısı
             $table->integer('participants_count')->nullable(); // Katılımcı sayısı
             $table->integer('point')->nullable(); // Soru puanı
+            $table->softDeletes();
             $table->timestamps();
 
             // Foreign key constraints (without onDelete)

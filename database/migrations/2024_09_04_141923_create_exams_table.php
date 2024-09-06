@@ -21,6 +21,7 @@ return new class extends Migration {
             $table->dateTime('end_time'); // Bitiş zamanı
             $table->integer('participants_count')->nullable(); // Katılımcı sayısı (boş bırakılabilir)
             $table->integer('total_point')->nullable(); // Katılımcı sayısı (boş bırakılabilir)
+            $table->softDeletes();
             $table->timestamps();
 
             // $table->foreign('exam_type_id')->references('id')->on('exam_types');
