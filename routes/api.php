@@ -29,7 +29,7 @@ Route::middleware('auth:api')->group(function () {
 
         //questions
         Route::prefix('questions')->group(function () {
-            Route::post('add-question-multiple', [QuestionController::class, 'storeMultiple']);
+            Route::get('get-questions/{exam_id}', [QuestionController::class, 'getAllQuestions']);
             Route::put('update-question/{id}', [QuestionController::class, 'update']);
             Route::delete('delete-question/{id}', [QuestionController::class, 'delete']);
         });
@@ -38,4 +38,5 @@ Route::middleware('auth:api')->group(function () {
 
     });
 });
+Route::post('add-question-multiple', [QuestionController::class, 'storeMultiple']);
 

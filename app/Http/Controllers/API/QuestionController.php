@@ -58,6 +58,7 @@ class QuestionController extends Controller
         ]);
     }
 
+
     public function update(Request $request, $id)
     {
         // Soruyu bul
@@ -130,5 +131,14 @@ class QuestionController extends Controller
                 'message' => $e->getMessage(),
             ]);
         }
+    }
+
+    public function getAllQuestions($exam_id)
+    {
+        $questions = $this->questionService->getQuestions($exam_id);
+        return response()->json([
+            'status' => 200,
+            'questions' => $questions,
+        ]);
     }
 }

@@ -32,10 +32,18 @@ class FileService
      */
     public function getImageUrl(string $path): string
     {
-        // Storage::url() içinde public/ varsa kaldır
-        $path = 'public/' . $path;
-        return Storage::url($path);
+        $baseUrl = env('BACKEND_URL');
+        // $baseUrl = "http://localhost:8000";
+
+        // Eğer path boş ise boş bir string döndür
+        if (!$path) {
+            return '';
+        }
+$path = Storage::url($path);
+        // Path'de zaten 'storage' dizini varsa, doğrudan birleştir
+        return $baseUrl . $path ;
     }
+
 
 
     /**
