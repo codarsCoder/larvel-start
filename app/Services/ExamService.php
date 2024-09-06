@@ -22,4 +22,15 @@ class ExamService
 
         return null;
     }
+
+    public function delete(Exam $exam)
+{
+    return $exam->delete();
+}
+
+    public function findById(int $id): ?Exam
+    {
+        return Exam::find($id);
+    }
+
 }

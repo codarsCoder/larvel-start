@@ -21,14 +21,17 @@ Route::middleware('auth:api')->group(function () {
 
 
     Route::middleware('isAdmin')->group(function () {
+
         //exams
         Route::prefix('exams')->group(function () {
             Route::post('add-exam', [ExamController::class, 'store']);
             Route::put('update-exam/{id}', [ExamController::class, 'update']);
+            Route::delete('delete-exam/{id}', [ExamController::class, 'deleteExam']);
         });
 
         //questions
         Route::prefix('questions')->group(function () {
+            Route::post('add-question-multiple', [QuestionController::class, 'storeMultiple']);
             Route::get('get-questions/{exam_id}', [QuestionController::class, 'getAllQuestions']);
             Route::put('update-question/{id}', [QuestionController::class, 'update']);
             Route::delete('delete-question/{id}', [QuestionController::class, 'delete']);
@@ -38,5 +41,7 @@ Route::middleware('auth:api')->group(function () {
 
     });
 });
+
+//testing   bu routeleri silmeyi unutma!!!!
 Route::post('add-question-multiple', [QuestionController::class, 'storeMultiple']);
 

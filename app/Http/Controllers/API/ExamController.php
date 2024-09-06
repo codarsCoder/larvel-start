@@ -4,13 +4,17 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Services\ExamService;
+use App\Services\FileService;
+use App\Services\QuestionService;
 use Illuminate\Http\Request;
 
 class ExamController extends Controller
 {
     protected $examService;
+    protected $fileService;
+    protected $questionService;
 
-    public function __construct(ExamService $examService)
+    public function __construct(ExamService $examService, FileService $fileService, QuestionService $questionService)
     {
         $this->examService = $examService;
     }
@@ -87,4 +91,47 @@ class ExamController extends Controller
             ]);
         }
     }
+
+    public function deleteExam($id)
+{
+    try {
+        // Sınavı bul
+        $exam = $this->examService->findById($id);
+
+        if (!$exam) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Exam not found',
+            ]);
+        }
+
+        // Sınava ait soruları bul
+        $questions = $this->questionService->getQuestions($exam->id);
+
+        // Her soruya ait görselleri sil
+        foreach ($questions as $question) {
+            if (!empty($question->question_img)) {
+                // Görsel dosyasını sil
+                $this->fileService->deleteFile($question->question_img);
+            }
+            // Soruyu sil
+            $this->questionService->delete($question);
+        }
+
+        // Son olarak sınavı sil
+        $this->examService->delete($exam);
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Exam and related questions deleted successfully',
+        ]);
+    } catch (\Exception $e) {
+        \Log::error($e->getMessage());
+        return response()->json([
+            'status' => 500,
+            'message' => 'Failed to delete exam',
+        ]);
+    }
+}
+
 }
