@@ -38,7 +38,7 @@ class PurchaseService
     {
         // Ödeme başarılıysa
         if ($paymentDetails->status === 'succeeded') {
-            $startPaymentAmount = $startPayment->amount;
+            $startPaymentAmount = $startPayment->current_amount;
             $paymentDetailsAmount = $paymentDetails->amount / 100;
 
             if ($startPaymentAmount == $paymentDetailsAmount) {

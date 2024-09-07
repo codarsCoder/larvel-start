@@ -82,7 +82,7 @@ class PaymentController extends Controller
 
         $paymentDetailsArray = [
             'status' => 'succeeded',
-            'amount' => 10000,
+            'amount' => 101000,
             'currency' => 'TRY',
             'payment_method' => 'paytr'
         ];
@@ -92,6 +92,12 @@ class PaymentController extends Controller
         $paymentDetails = json_decode($paymentDetailsJson);
 
         $startPayment = $this->purchaseService->getPaymentWithStatus($transactionId, 'pending');
+
+
+        $startPaymentAmount = $startPayment->current_amount;
+        $paymentDetailsAmount = $paymentDetails->amount / 100;
+
+        // return response()->json(['start' =>  $startPaymentAmount , 'end' =>$paymentDetailsAmount]);
         if ($startPayment) {
             // Service üzerinden ödeme işlemini yürütüyoruz
             $updatedPayment = $this->purchaseService->processPayment($paymentDetails, $startPayment, $request->all());
