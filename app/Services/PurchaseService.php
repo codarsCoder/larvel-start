@@ -24,6 +24,11 @@ class PurchaseService
         return Cart::create($data);
     }
 
+    public function getCartsWithPaymentId($paymentId)
+    {
+        return Cart::where('payment_id', $paymentId)->get();
+    }
+
     public function createPayment($data)
     {
         $purchaseData =Payment::create($data);
@@ -34,6 +39,10 @@ class PurchaseService
         return Payment::where('transaction_id', $transactionId)->where('status', $status)->first();
     }
 
+    public function createPurchase($data)
+    {
+        return Purchase::create($data);
+    }
     public function processPayment(object $paymentDetails, Payment $startPayment, array $requestData)
     {
         // Ödeme başarılıysa
@@ -42,6 +51,18 @@ class PurchaseService
             $paymentDetailsAmount = $paymentDetails->amount / 100;
 
             if ($startPaymentAmount == $paymentDetailsAmount) {
+
+               $carts = $this->getCartsWithPaymentId($startPayment->id);
+               foreach ($carts as $cart) {
+                $this->createPurchase([
+                    'user_id' => $cart->user_id,
+                    'exam_id' => $cart->exam_id,
+                    'payment_id' => $cart->payment_method,
+                    'transaction_id' => $startPayment->transaction_id,
+                ]);
+
+               }
+
                 // Ödeme tutarı doğruysa
                 $startPayment->status = 'succeeded';
             } else {
