@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Models\Payment;
 use App\Services\ExamService;
 use App\Services\PurchaseService;
 use Illuminate\Support\Facades\Auth;
@@ -47,7 +48,7 @@ class PaymentController extends Controller
         $createPaymentId = $this->purchaseService->createPayment([
             'user_id' => $user->id,
             'transaction_id' => $transactionId,
-            'payment_method' => mb_strtoupper($paymentMethod,"UTF-8"),
+            'payment_method' => mb_strtoupper($paymentMethod, "UTF-8"),
             'payment_type' => 'cart',
             'current_amount' => $totalAmount,
             'current_currency' => "TRY",
@@ -61,26 +62,44 @@ class PaymentController extends Controller
             $this->purchaseService->createCart([
                 'user_id' => $user->id,
                 'exam_id' => $exam->id,
-                'purchase_id' => $createPaymentId,
+                'payment_id' => $createPaymentId,
                 'amount' => $exam->amount,
                 'currency' => $exam->currency,
                 'payment_method' => $paymentMethod,
             ]);
         }
 
+        return response()->json(['transaction_id' => $transactionId]);
+    }
 
-        // Toplam tutarı güncelle
-        // $payment = PaymentsModel::create([
-        //     'user_id' => $userId,
-        //     'email' => "testasdas",
-        //     'cart_id' => implode(',', $cartIds),
-        //     'currency' => $currency,
-        //     'amount' => $totalAmount, // Güncellendi
-        //     'payment_method' => $paymentMethod,
-        //     'transaction_id' => $transaction_id,
-        //     'status' => 'pending',
-        //     'cart_total' => $totalAmount,
-        // ]);
-        return response()->json(['data' => $totalAmount]);
+    public function returnPayment(Request $request)
+    {
+        $transactionId = request()->input('transaction_id');
+
+        // Stripe API üzerinden ödeme detaylarını alma
+        // $paymentDetails = \Stripe\PaymentIntent::retrieve($transactionId);
+
+        $paymentDetails = [
+            'status' => 'succeeded',
+            'amount' => 10000,
+            'currency' => 'TRY',
+            'payment_method' => 'paytr'
+        ];
+
+        $startPayment = $this->purchaseService->getPaymentWithStatus($transactionId, 'pending');
+
+        if ($startPayment) {
+            // Service üzerinden ödeme işlemini yürütüyoruz
+            $updatedPayment = $this->purchaseService->processPayment($paymentDetails, $startPayment, $request->all());
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Payment processed successfully',
+                'payment' => $updatedPayment
+            ]);
+
+        } else {
+            return response()->json(['status' => 404, 'message' => 'Payment not found']);
+        }
     }
 }

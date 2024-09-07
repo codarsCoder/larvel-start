@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login-start', [AuthController::class, 'loginStart']);
 Route::post('login', [AuthController::class, 'login']);
+Route::get('return-payment', [PaymentController::class, 'returnPayment']);
 
 Route::middleware('auth:api')->group(function () {
 

@@ -29,4 +29,39 @@ class PurchaseService
         $purchaseData =Payment::create($data);
         return $purchaseData->id;
     }
+
+    public function getPaymentWithStatus($transactionId, $status)
+    {
+        return Payment::where('transaction_id', $transactionId)->where('status', $status)->first();
+    }
+
+    public function processPayment(array $paymentDetails, Payment $startPayment, array $requestData)
+    {
+        // Ödeme başarılıysa
+        if ($paymentDetails['status'] === 'succeeded') {
+            $startPaymentAmount = $startPayment->amount;
+            $paymentDetailsAmount = $paymentDetails['amount'] / 100;
+
+            if ($startPaymentAmount == $paymentDetailsAmount) {
+                // Ödeme tutarı doğruysa
+                $startPayment->status = 'succeeded';
+            } else {
+                // Ödeme tutarı uyumsuzsa
+                $startPayment->status = 'mismatch';
+            }
+
+        } else {
+            // Ödeme başarılı değilse, gelen status neyse onu kaydediyoruz
+            $startPayment->status = $paymentDetails['status'];
+        }
+
+        // Ödeme açıklaması ekleniyor
+        $startPayment->description = json_encode($requestData);
+        $startPayment->save();
+
+        return $startPayment;
+    }
+
+
+
 }
