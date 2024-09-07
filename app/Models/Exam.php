@@ -21,6 +21,8 @@ class Exam extends Model
         'end_time',
         'participants_count',
         'total_point',
+        'amount',
+        'currency',
         'deleted_at',
     ];
 }

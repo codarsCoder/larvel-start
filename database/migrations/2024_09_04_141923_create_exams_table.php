@@ -21,6 +21,8 @@ return new class extends Migration {
             $table->dateTime('end_time'); // Bitiş zamanı
             $table->integer('participants_count')->nullable(); // Katılımcı sayısı (boş bırakılabilir)
             $table->integer('total_point')->nullable(); // Katılımcı sayısı (boş bırakılabilir)
+            $table->decimal('amount', 10, 2);
+            $table->string('currency', 3);
             $table->softDeletes();
             $table->timestamps();
 

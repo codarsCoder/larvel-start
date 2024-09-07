@@ -40,6 +40,8 @@ class ExamController extends Controller
             'end_time' => 'required|date|after:start_time',
             'participants_count' => 'nullable|integer|min:0',
             'total_point' => 'nullable|integer|min:0',
+            'amount' => 'required|numeric|min:0',
+            'currency' => 'required|string|max:4',
         ]);
 
         $exam = $this->examService->create($validated);
@@ -161,10 +163,11 @@ class ExamController extends Controller
     {
         $user = Auth::user();
         $purchases = $this->purchaseService->getPurchasedsByUser($user->id);
-        // $exams = $this->examService->getExams();
+        $examIds = $purchases->pluck('exam_id')->toArray();
+        $exams = $this->examService->getExamByEamIds($examIds);
         return response()->json([
             'status' => 200,
-            'exams' => $purchases
+            'exams' => $exams
         ]);
     }
 

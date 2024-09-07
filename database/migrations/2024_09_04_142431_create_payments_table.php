@@ -18,8 +18,10 @@ return new class extends Migration
             $table->string('transaction_token')->nullable();
             $table->string('payment_method');
             $table->string('payment_type');
-            $table->decimal('amount', 8, 2);
-            $table->string('currency', 3);
+            $table->decimal('current_amount', 10, 2);
+            $table->string('current_currency', 3);
+            $table->decimal('amount', 10, 2)->nullable();
+            $table->string('currency', 3)->nullable();
             $table->string('status');
             $table->text('description')->nullable();
             $table->timestamps();
