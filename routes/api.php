@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\ExamController;
+use App\Http\Controllers\API\PaymentController;
 use App\Http\Controllers\API\QuestionController;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Http\Request;
@@ -19,7 +20,9 @@ Route::middleware('auth:api')->group(function () {
 
 
     Route::get('get-my-exams', [ExamController::class, 'getExams']);
-    
+
+    Route::post('payments/start-payment', [PaymentController::class, 'createPaymentIntent']);
+
     Route::middleware('isAdmin')->group(function () {
 
         //exams

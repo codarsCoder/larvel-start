@@ -7,5 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cart extends Model
 {
+
     use HasFactory;
+    protected $fillable = [
+        'user_id',
+        'exam_id',
+        'purchase_id',
+        'amount',
+        'currency',
+    ];
 }

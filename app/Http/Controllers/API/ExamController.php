@@ -164,7 +164,7 @@ class ExamController extends Controller
         $user = Auth::user();
         $purchases = $this->purchaseService->getPurchasedsByUser($user->id);
         $examIds = $purchases->pluck('exam_id')->toArray();
-        $exams = $this->examService->getExamByEamIds($examIds);
+        $exams = $this->examService->getExamByExamIds($examIds);
         return response()->json([
             'status' => 200,
             'exams' => $exams

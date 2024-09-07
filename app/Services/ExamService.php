@@ -38,9 +38,9 @@ class ExamService
         return Exam::all();
     }
 
-    public function getExamByEamIds(array $eamIds)
+    public function getExamByExamIds(array $examIds)
     {
-        return Exam::whereIn('id', $eamIds)->get();
+        return Exam::whereIn('id', $examIds)->get();
     }
 
 }
