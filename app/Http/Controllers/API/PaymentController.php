@@ -79,15 +79,19 @@ class PaymentController extends Controller
         // Stripe API üzerinden ödeme detaylarını alma
         // $paymentDetails = \Stripe\PaymentIntent::retrieve($transactionId);
 
-        $paymentDetails = [
+        $paymentDetailsArray = [
             'status' => 'succeeded',
             'amount' => 10000,
             'currency' => 'TRY',
             'payment_method' => 'paytr'
         ];
 
-        $startPayment = $this->purchaseService->getPaymentWithStatus($transactionId, 'pending');
+        // Diziyi JSON string'e çeviriyoruz ve sonra JSON objesine dönüştürüyoruz
+        $paymentDetailsJson = json_encode($paymentDetailsArray);
+        $paymentDetails = json_decode($paymentDetailsJson);
 
+        $startPayment = $this->purchaseService->getPaymentWithStatus($transactionId, 'pending');
+        return response()->json(['data' =>  $paymentDetails->status]);
         if ($startPayment) {
             // Service üzerinden ödeme işlemini yürütüyoruz
             $updatedPayment = $this->purchaseService->processPayment($paymentDetails, $startPayment, $request->all());
