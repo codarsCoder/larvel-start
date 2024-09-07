@@ -99,7 +99,6 @@ class PaymentController extends Controller
             return response()->json([
                 'status' => 200,
                 'message' => 'Payment processed successfully',
-                'payment' => $updatedPayment
             ]);
 
         } else {
