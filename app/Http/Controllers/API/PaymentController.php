@@ -57,13 +57,14 @@ class PaymentController extends Controller
         ]);
         foreach ($exams as $key => $exam) {
 
+            $exam = $this->examService->findById($exam->id);
             $this->purchaseService->createCart([
                 'user_id' => $user->id,
                 'exam_id' => $exam->id,
+                'purchase_id' => $createPaymentId,
                 'amount' => $exam->amount,
                 'currency' => $exam->currency,
                 'payment_method' => $paymentMethod,
-                'transaction_id' => $transactionId,
             ]);
         }
 

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('exam_id');
-            $table->unsignedBigInteger('purchase_id');
+            $table->unsignedBigInteger('payment_id');
             $table->decimal('amount', 8, 2);
             $table->string('currency', 3);
             $table->timestamps();
