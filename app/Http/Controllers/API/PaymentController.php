@@ -74,10 +74,11 @@ class PaymentController extends Controller
 
     public function returnPayment(Request $request)
     {
-        $transactionId = request()->input('transaction_id');
+        $transactionId = $request->input('transaction_id');
 
         // Stripe API üzerinden ödeme detaylarını alma
         // $paymentDetails = \Stripe\PaymentIntent::retrieve($transactionId);
+
 
         $paymentDetailsArray = [
             'status' => 'succeeded',
@@ -91,7 +92,6 @@ class PaymentController extends Controller
         $paymentDetails = json_decode($paymentDetailsJson);
 
         $startPayment = $this->purchaseService->getPaymentWithStatus($transactionId, 'pending');
-        return response()->json(['data' =>  $paymentDetails->status]);
         if ($startPayment) {
             // Service üzerinden ödeme işlemini yürütüyoruz
             $updatedPayment = $this->purchaseService->processPayment($paymentDetails, $startPayment, $request->all());
