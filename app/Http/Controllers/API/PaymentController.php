@@ -49,7 +49,7 @@ class PaymentController extends Controller
             'user_id' => $user->id,
             'transaction_id' => $transactionId,
             'payment_method' => mb_strtoupper($paymentMethod, "UTF-8"),
-            'payment_type' => 'cart',
+            'payment_type' => 'mobile',
             'current_amount' => $totalAmount,
             'current_currency' => "TRY",
             'amount' => 0,
@@ -82,7 +82,7 @@ class PaymentController extends Controller
 
         $paymentDetailsArray = [
             'status' => 'succeeded',
-            'amount' => 101000,
+            'amount' => 10000,
             'currency' => 'TRY',
             'payment_method' => 'paytr'
         ];

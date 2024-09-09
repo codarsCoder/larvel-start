@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('exam_id');
             $table->unsignedBigInteger('payment_id');
-            $table->string('transaction_id')->unique();
+            $table->string('transaction_id');
             $table->timestamps();
 
             // Foreign key constraints, but without cascading on delete

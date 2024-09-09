@@ -57,7 +57,7 @@ class PurchaseService
                 $this->createPurchase([
                     'user_id' => $cart->user_id,
                     'exam_id' => $cart->exam_id,
-                    'payment_id' => $cart->payment_method,
+                    'payment_id' => $startPayment->id,
                     'transaction_id' => $startPayment->transaction_id,
                 ]);
 
